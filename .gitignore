@@ -1,0 +1,10 @@
+env/
+sites/assets/
+sites/*/private/
+sites/*/public/files/
+logs/
+*.pyc
+__pycache__/
+node_modules/
+config/pids/
+redis*.pid
