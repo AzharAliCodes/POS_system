@@ -525,28 +525,42 @@ def merge_item_row(
         )
 
     row = dict(item)
+    selling_price = price_row.get("price_list_rate") if price_row else 0
+
+    buying_price = (
+        meta.get("last_purchase_rate")
+        or meta.get("valuation_rate")
+        or selling_price
+        or 0
+     )
+
     row.update(
-        {
-            "item_uoms": uoms,
-            "item_barcode": lookup_data.barcode_map.get(item_code, []),
-            "actual_qty": actual_qty,
-            "has_batch_no": meta.get("has_batch_no"),
-            "has_serial_no": meta.get("has_serial_no"),
-            "allow_negative_stock": meta.get("allow_negative_stock"),
-            "purchase_uom": meta.get("purchase_uom"),
-            "standard_rate": meta.get("standard_rate"),
-            "valuation_rate": meta.get("valuation_rate"),
-            "default_bom": meta.get("default_bom"),
-            "batch_no_data": batch_rows,
-            "serial_no_data": lookup_data.serial_map.get(item_code, []),
-            "rate": price_row.get("price_list_rate") if price_row else 0,
-            "price_list_rate": price_row.get("price_list_rate") if price_row else 0,
-            "currency": price_currency or price_list_currency,
-            "price_list_currency": price_list_currency,
-            "plc_conversion_rate": exchange_rate,
-            "conversion_rate": exchange_rate,
-        }
-    )
+       {
+           "item_uoms": uoms,
+           "item_barcode": lookup_data.barcode_map.get(item_code, []),
+           "actual_qty": actual_qty,
+           "has_batch_no": meta.get("has_batch_no"),
+           "has_serial_no": meta.get("has_serial_no"),
+           "allow_negative_stock": meta.get("allow_negative_stock"),
+           "purchase_uom": meta.get("purchase_uom"),
+           "standard_rate": meta.get("standard_rate"),
+           "valuation_rate": meta.get("valuation_rate"),
+           "default_bom": meta.get("default_bom"),
+           "batch_no_data": batch_rows,
+           "serial_no_data": lookup_data.serial_map.get(item_code, []),
+
+           "rate": buying_price,
+           "buying_price": buying_price,
+           "last_purchase_rate": buying_price,
+
+           "price_list_rate": selling_price,
+
+           "currency": price_currency or price_list_currency,
+           "price_list_currency": price_list_currency,
+           "plc_conversion_rate": exchange_rate,
+           "conversion_rate": exchange_rate,
+       }
+   )
     bom_cost = lookup_data.bom_map.get(item_code)
     if bom_cost:
         row["manufacturing_cost"] = bom_cost.get("rate")

@@ -270,12 +270,23 @@ async function bulkPutPrices(priceList, items, syncedAt = Date.now()) {
 			await db.open();
 		}
 		const records = items.map((it) => {
-			const price = it.price_list_rate ?? it.rate ?? 0;
+			const buyingPrice =
+			it.last_purchase_rate ??
+			it.valuation_rate ??
+			0;
+
+			const sellingPrice =
+			it.price_list_rate ??
+			it.rate ??
+			0;
 			return {
 				price_list: priceList,
 				item_code: it.item_code,
+				price_list_rate: sellingPrice,
+				buying_price: buyingPrice,
+				rate: sellingPrice,
+				last_purchase_rate: buyingPrice,
 				rate: price,
-				price_list_rate: price,
 				timestamp: syncedAt,
 			};
 		});

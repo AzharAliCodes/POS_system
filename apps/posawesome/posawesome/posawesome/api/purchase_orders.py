@@ -350,7 +350,7 @@ def get_last_buying_rate(supplier, item_codes, company=None):
                 "item_code": ["in", item_codes],
                 "buying": 1,
             },
-            fields=["item_code", "price_list_rate", "uom", "currency"],
+            fields=["item_code", "price_list_rate as buying_price", "uom", "currency"],
         )
 
         for row in price_list_rates:
@@ -362,7 +362,7 @@ def get_last_buying_rate(supplier, item_codes, company=None):
                         "Price List", buying_price_list, "currency"
                     )
                 result[code] = {
-                    "rate": row.get("price_list_rate", 0),
+                    "rate": row.get("buying_price", 0),
                     "currency": price_list_currency,
                     "uom": row.get("uom"),
                     "source": "price_list",
@@ -478,16 +478,16 @@ def create_purchase_item(data):
     item_doc.flags.ignore_mandatory = True
     item_doc.insert()
 
-    selling_price_list = payload.get("selling_price_list") or profile.get("selling_price_list")
+    buying_price_list = payload.get("buying_price_list") or profile.get("buying_price_list")
     buying_price_list = payload.get("buying_price_list") or _resolve_buying_price_list()
 
-    selling_price = payload.get("selling_price")
+    buying_price = payload.get("buying_price")
     buying_price = payload.get("buying_price")
 
     _upsert_item_price(
         item_code,
-        selling_price_list,
-        selling_price,
+        buying_price_list,
+        buying_price,
         uom=stock_uom,
         selling=True,
     )
@@ -504,7 +504,7 @@ def create_purchase_item(data):
 
     return {
         "item": item_doc.as_dict(),
-        "selling_price_list": selling_price_list,
+        "buying_price_list": buying_price_list,
         "buying_price_list": buying_price_list,
     }
 

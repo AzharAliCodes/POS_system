@@ -11,7 +11,7 @@
 				<v-btn
 					variant="outlined"
 					prepend-icon="mdi-refresh"
-					@click="resetReport"
+					@click="resetReport"  
 					:disabled="loading"
 				>Reset</v-btn>
 				<v-btn
@@ -84,7 +84,7 @@
 					<div class="text-h6 font-weight-bold text-orange-darken-2">{{ fmt(summary.total_gst) }}</div>
 				</v-card>
 			</v-col>
-		</v-row>
+		</v-row> 
 
 		<!-- ── Screen: Data Table ──────────────────────────────────── -->
 		<v-card variant="outlined" class="no-print" v-if="items.length">
@@ -106,14 +106,14 @@
 				<tbody>
 					<tr v-for="(row, i) in items" :key="i">
 						<td class="text-grey">{{ i + 1 }}</td>
-						<td>{{ fmtDate(row.posting_date) }}</td>
+						<td>{{ fmtDate(row.date) }}</td>
 						<td class="font-weight-medium" style="font-size:12px">{{ row.invoice }}</td>
 						<td>{{ row.customer }}</td>
-						<td class="font-weight-medium">{{ row.item_name }}</td>
-						<td class="text-right">{{ row.qty }} {{ row.uom }}</td>
+						<td class="font-weight-medium">{{ row.item }}</td>
+						<td class="text-right">{{ row.qty }}</td>
 						<td class="text-right">{{ fmt(row.rate) }}</td>
-						<td class="text-right">{{ fmt(row.net_amount) }}</td>
-						<td class="text-right text-orange-darken-2 font-weight-medium">{{ fmt(row.gst_1pct) }}</td>
+						<td class="text-right">{{ fmt(row.net_amt) }}</td>
+						<td class="text-right text-orange-darken-2 font-weight-medium">{{ fmt(row.gst_amount) }}</td>
 						<td class="text-right font-weight-bold">{{ fmt(row.grand_total) }}</td>
 					</tr>
 					<!-- Totals row -->
@@ -213,17 +213,17 @@
 					<template v-for="(invoiceGroup, invName) in groupedByInvoice" :key="invName">
 						<tr v-for="(row, ri) in invoiceGroup" :key="ri" :class="ri === 0 ? 'inv-first-row' : 'inv-cont-row'">
 							<td>{{ itemIndex(invName, ri) }}</td>
-							<td>{{ ri === 0 ? fmtDate(row.posting_date) : '' }}</td>
+							<td>{{ ri === 0 ? fmtDate(row.date) : '' }}</td>
 							<td>{{ ri === 0 ? row.invoice : '' }}</td>
 							<td>{{ ri === 0 ? row.customer : '' }}</td>
-							<td class="item-name">{{ row.item_name }}</td>
+							<td class="item-name">{{ row.item }}</td>
 							<td class="text-right">{{ row.qty }}</td>
 							<td>{{ row.uom }}</td>
 							<td class="text-right">{{ fmt(row.rate) }}</td>
-							<td class="text-right">{{ fmt(row.net_amount) }}</td>
-							<td class="text-right">{{ fmt(row.gst_1pct / 2) }}</td>
-							<td class="text-right">{{ fmt(row.gst_1pct / 2) }}</td>
-							<td class="text-right gst-col">{{ fmt(row.gst_1pct) }}</td>
+							<td class="text-right">{{ fmt(row.net_amt) }}</td>
+							<td class="text-right">{{ fmt(row.gst_amount / 2) }}</td>
+							<td class="text-right">{{ fmt(row.gst_amount / 2) }}</td>
+							<td class="text-right gst-col">{{ fmt(row.gst_amount) }}</td>
 							<td class="text-right total-col">{{ fmt(row.grand_total) }}</td>
 						</tr>
 					</template>
@@ -339,31 +339,94 @@ async function fetchReport() {
 	items.value = [];
 	summary.value = { total_net: 0, total_gst: 0, total_grand: 0, company: "" };
 
-	try {
-		const res = await frappe.call({
-			method: "posawesome.posawesome.api.gst_report.get_gst_sales_data",
-			args: {
-				from_date: fromDate.value,
-				to_date: toDate.value,
-			},
+
+try {
+	const filters = {
+		from_date: fromDate.value,
+		to_date: toDate.value,
+		company: "City Trader",
+	};
+
+	const res = await frappe.call({
+		method: "frappe.desk.query_report.run",
+		args: {
+			report_name: "GST Detailed Report",
+			filters: filters,
+			ignore_prepared_report: false,
+			are_default_filters: true,
+		},
+	});
+
+	const data = res.message || {};
+
+	// Full rows from ERP report
+	const rows = data.result || [];
+
+
+	// GST-only rows
+	items.value = rows;
+
+	// Summary calculations
+	// summary.value = {
+	// 	total_net: items.value.reduce(
+	// 		(sum, row) => sum + parseFloat(row.net_total || 0),
+	// 		0
+	// 	),
+
+	// 	total_gst: items.value.reduce(
+	// 		(sum, row) => sum + parseFloat(row["gst_1%___ct"] || 0),
+	// 		0
+	// 	),
+
+	// 	total_grand: items.value.reduce(
+	// 		(sum, row) => sum + parseFloat(row.grand_total || 0),
+	// 		0
+	// 	),
+
+	// 	company: "City Trader",
+	// };
+
+
+summary.value = {
+	total_net: items.value.reduce(
+		(sum, row) => sum + parseFloat(row.net_amt || 0),
+		0
+	),
+
+	total_gst: items.value.reduce(
+		(sum, row) => sum + parseFloat(row.gst_amount || 0),
+		0
+	),
+
+	total_grand: items.value.reduce(
+		(sum, row) => sum + parseFloat(row.grand_total || 0),
+		0
+	),
+
+	company: "City Trader",
+};
+
+
+
+	if (!items.value.length) {
+		frappe?.show_alert?.({
+			message: "No GST-applicable items found for this period.",
+			indicator: "blue",
 		});
-
-		const data = res.message || {};
-		items.value   = data.items   || [];
-		summary.value = data.summary || { total_net: 0, total_gst: 0, total_grand: 0, company: "" };
-
-		if (!items.value.length) {
-			frappe?.show_alert?.({
-				message: "No GST-applicable items found for this period.",
-				indicator: "blue",
-			});
-		}
-	} catch (err) {
-		console.error("GST Report fetch error:", err);
-		frappe?.show_alert?.({ message: "Failed to fetch report data.", indicator: "red" });
-	} finally {
-		loading.value = false;
 	}
+
+} catch (err) {
+	console.error("GST Report fetch error:", err);
+
+	frappe?.show_alert?.({
+		message: "Failed to fetch report data.",
+		indicator: "red",
+	});
+
+} finally {
+	loading.value = false;
+}
+ 
 }
 
 function resetReport() {

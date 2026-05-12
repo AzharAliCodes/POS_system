@@ -67,7 +67,6 @@
 								class="pos-themed-input"
 								:rules="[(v) => !!v || __('* Required')]"
 							></v-autocomplete>
-						</v-col>
 						<v-col cols="12" class="mt-3">
 							<v-checkbox
 								v-model="form.gst_applicable"

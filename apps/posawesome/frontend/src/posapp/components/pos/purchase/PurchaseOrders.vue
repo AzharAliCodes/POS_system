@@ -1,3 +1,4 @@
+
 <template>
 	<div class="pa-0 h-100">
 		<v-row class="h-100 ma-0">
@@ -279,7 +280,7 @@ export default {
 				error?.responseJSON?.message ||
 				__("Unable to create purchase order")
 			);
-		};
+		}; 
 
 		const submitPurchaseOrder = async (print = false, printFormat = null, printInvoice = false) => {
 			if (!supplier.value || !transactionDate.value || !scheduleDate.value) {
@@ -320,7 +321,7 @@ export default {
 						uom: item.uom,
 						conversion_factor: item.conversion_factor,
 						qty: item.qty,
-						rate: item.rate,
+						rate: item.buying_price || item.last_purchase_rate || item.rate || 0,
 						received_qty: receiveNow.value ? item.received_qty : undefined,
 						warehouse: warehouse.value || item.warehouse,
 					})),
@@ -397,8 +398,8 @@ export default {
 
 		onBeforeUnmount(() => {
 			eventBus?.emit?.("update_buying_price_list", null);
-			if (pos_profile.value?.selling_price_list)
-				itemsStore.updatePriceList(pos_profile.value.selling_price_list);
+			if (pos_profile.value?.buying_price_list)
+				itemsStore.updatePriceList(pos_profile.value.buying_price_list);
 		});
 
 		return {
@@ -449,8 +450,6 @@ export default {
 				{ title: __("Qty"), key: "qty", align: "center", width: "15%" },
 				{ title: __("Rate"), key: "rate", align: "center", width: "15%" },
 			];
-			if (this.receiveNow)
-				h.push({ title: __("Received"), key: "received_qty", align: "center", width: "10%" });
 			h.push(
 				{ title: __("Amount"), key: "amount", align: "end", width: "10%" },
 				{ title: "", key: "actions", align: "center", width: "50px" },
