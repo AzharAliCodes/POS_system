@@ -9,6 +9,8 @@ export function useItemCreation() {
 		new_item.name_overridden = 0;
 		// Mark server detail state so invoice can avoid redundant refreshes
 		new_item._detailSynced = false;
+		// Auto-set posa_tax_applicable from item master gst_applicable
+		new_item.posa_tax_applicable = item.gst_applicable ? 1 : 0;
 		new_item._detailInFlight = false;
 		new_item._needs_update = false; // Will be set to true if added fresh
 

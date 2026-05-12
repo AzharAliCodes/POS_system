@@ -555,6 +555,11 @@ export default {
 					to: "/cash-movement",
 				});
 			}
+			items.push({
+				text: "GST Sales Report",
+				icon: "mdi-file-document-outline",
+				to: "/gst-sales-report",
+			});
 			this.items = items;
 		},
 		async fetchTerminalEmployees() {

@@ -90,6 +90,17 @@
 								class="pos-themed-input"
 							></v-text-field>
 						</v-col>
+						<!-- GST Applicable Checkbox -->
+						<v-col cols="12">
+							<v-checkbox
+								v-model="form.gst_applicable"
+								:label="frappe._('GST Applicable')"
+								density="compact"
+								color="primary"
+								hide-details
+								class="mt-1"
+							></v-checkbox>
+						</v-col>
 					</v-row>
 				</v-form>
 			</v-card-text>
@@ -148,6 +159,7 @@ const form = reactive({
 	item_group: "",
 	stock_uom: "Nos",
 	standard_rate: 0,
+	gst_applicable: 0,
 });
 
 const resetForm = () => {
@@ -163,6 +175,7 @@ const resetForm = () => {
 				: "";
 	form.stock_uom = "Nos";
 	form.standard_rate = 0;
+	form.gst_applicable = 0;
 };
 
 watch(
@@ -220,6 +233,7 @@ const submit = async () => {
 			item_group: form.item_group,
 			stock_uom: form.stock_uom,
 			standard_rate: form.standard_rate,
+			gst_applicable: form.gst_applicable ? 1 : 0,
 		});
 
 		const newItem = res.message || res;

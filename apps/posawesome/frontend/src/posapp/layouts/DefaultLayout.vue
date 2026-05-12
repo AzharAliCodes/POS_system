@@ -896,6 +896,9 @@ const setupEventListeners = () => {
 					setProfile: customersStore.setPosProfile,
 					load: customersStore.get_customer_names,
 				});
+			} else {
+				markSourceLoaded("items");
+				markSourceLoaded("customers");
 			}
 		},
 		{ deep: true, immediate: true },

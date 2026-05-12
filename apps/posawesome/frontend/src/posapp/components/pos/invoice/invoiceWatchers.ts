@@ -41,7 +41,7 @@ interface InvoiceWatchersVm {
 	fetch_customer_balance: () => void;
 	set_delivery_charges: () => void;
 	sync_invoice_customer_details: (_details?: Record<string, unknown>) => void;
-	update_item_detail: (_item: WatcherItem) => void;
+	update_item_detail: (_item: WatcherItem, _force?: boolean) => void;
 	emitCartQuantities?: () => void;
 	scheduleOfferRefresh?: () => void;
 	schedulePricingRuleApplication?: (_force?: boolean) => void;
@@ -131,7 +131,7 @@ const invoiceWatchers: Record<string, unknown> & ThisType<InvoiceWatchersVm> = {
 				(it: WatcherItem) => it.posa_row_id === expandedId,
 			);
 			if (item) {
-				this.update_item_detail(item);
+				this.update_item_detail(item, true);
 			}
 		}
 	},

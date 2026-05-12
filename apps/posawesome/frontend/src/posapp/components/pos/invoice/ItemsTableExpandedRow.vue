@@ -272,6 +272,16 @@
 								color="success"
 							></v-checkbox>
 						</div>
+						<div class="posa-form-field">
+							<v-checkbox
+								density="compact"
+								:label="frappe._('Tax Applicable')"
+								v-model="item.posa_tax_applicable"
+								hide-details
+								class="mt-1"
+								color="primary"
+							></v-checkbox>
+						</div>
 					</div>
 				</div>
 

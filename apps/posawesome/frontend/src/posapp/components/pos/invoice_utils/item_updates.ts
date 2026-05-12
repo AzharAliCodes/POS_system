@@ -303,6 +303,10 @@ export function _applyItemDetailPayload(
 			data.locked_price === "1";
 	item.description = data.description;
 	item.item_tax_template = data.item_tax_template;
+	// Auto-set posa_tax_applicable from item master gst_applicable field
+	if (data.gst_applicable !== undefined) {
+		item.posa_tax_applicable = data.gst_applicable ? 1 : 0;
+	}
 	if (!lockReturnPricing) {
 		item.discount_percentage = data.discount_percentage;
 	}

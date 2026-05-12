@@ -54,6 +54,11 @@ const routes = [
 		meta: { title: "Reports", layout: "default", loadingMessage: "Loading reports..." },
 	},
 	{
+		path: "/gst-sales-report",
+		component: () => import("@/posapp/components/reports/GstSalesReport.vue"),
+		meta: { title: "GST Sales Report", layout: "default", loadingMessage: "Loading GST Sales Report..." },
+	},
+	{
 		path: "/barcode",
 		component: () => import("../components/pos/shell/BarcodePrinting.vue"),
 		meta: {
