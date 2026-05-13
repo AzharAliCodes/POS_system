@@ -134,7 +134,6 @@
 					</v-col>
 				</v-row>
 
-				<!-- Print Format Selection -->
 				<v-row class="pa-3 ma-0" dense>
 					<v-col cols="12" v-if="createInvoice">
 						<v-switch
@@ -150,7 +149,7 @@
 						<v-select
 							v-model="selectedPrintFormat"
 							:items="printFormats"
-							:label="printInvoice ? __('Print Format (Invoice)') : __('Print Format (Order)')"
+
 							density="compact"
 							variant="solo"
 							color="primary"
@@ -188,7 +187,7 @@
 							:loading="loading"
 							:disabled="loading || !isPaymentValid"
 						>
-							{{ __("Submit & Print") }}
+
 						</v-btn>
 					</v-col>
 					<v-col cols="12" class="mt-2">
@@ -468,7 +467,7 @@ async function fetchPrintFormats() {
 			}
 		}
 	} catch (e) {
-		console.error("Failed to fetch print formats", e);
+
 	}
 }
 </script>
