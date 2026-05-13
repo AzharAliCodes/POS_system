@@ -3,7 +3,7 @@
 		<v-data-table-virtual
 			ref="tableRef"
 			:headers="headers"
-			:items="displayedItems"
+			:items="displayedItems || []"
 			class="sleek-data-table overflow-y-auto"
 			:style="{ height: 'calc(100% - 80px)' }"
 			item-key="item_code"

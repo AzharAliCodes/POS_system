@@ -10,7 +10,7 @@
 			<div class="d-flex gap-2">
 				<v-btn
 					variant="outlined"
-					prepend-icon="mdi-refresh"
+					prepend-icon="mdi-refresh" 
 					@click="resetReport"  
 					:disabled="loading"
 				>Reset</v-btn>

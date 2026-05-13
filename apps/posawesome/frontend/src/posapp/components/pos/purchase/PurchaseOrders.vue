@@ -56,6 +56,7 @@
 							@update-uom="({ item, value }) => updateItemUom(item, value)"
 							@update-qty="({ item, value }) => updateItemQty(item, value)"
 							@update-rate="({ item, value }) => updateItemRate(item, value)"
+							@update-selling-rate="({ item, value }) => item.custom_selling_rate = value"
 							@update-received-qty="({ item, value }) => updateItemReceivedQty(item, value)"
 							@remove-item="removeItem"
 						/>
@@ -290,13 +291,33 @@ export default {
 			submitLoading.value = true;
 			try {
 				const formatDateForBackend = (date) => {
-					if (!date) return null;
-					const western = formatUtils.fromArabicNumerals(String(date));
-					if (/^\d{4}-\d{2}-\d{2}$/.test(western)) return western;
-					const d = new Date(western);
-					if (isNaN(d.getTime())) return western;
-					return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-				};
+	if (!date) return null;
+
+	const western = formatUtils.fromArabicNumerals(String(date)).trim();
+
+	// Already correct format
+	if (/^\d{4}-\d{2}-\d{2}$/.test(western)) {
+		return western;
+	}
+
+	// Handle DD-MM-YYYY
+	const match = western.match(/^(\d{2})-(\d{2})-(\d{4})$/);
+
+	if (match) {
+		const [, day, month, year] = match;
+		return `${year}-${month}-${day}`;
+	}
+
+	// Handle DD/MM/YYYY
+	const slashMatch = western.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+
+	if (slashMatch) {
+		const [, day, month, year] = slashMatch;
+		return `${year}-${month}-${day}`;
+	}
+
+	return western;
+};
 
 				const resolvedSupplier =
 					typeof supplier.value === "object" && supplier.value !== null
@@ -315,16 +336,23 @@ export default {
 					pos_profile: pos_profile.value,
 					payments: payments.value,
 					items: purchaseItems.value.map((item) => ({
-						item_code: item.item_code,
-						item_name: item.item_name,
-						stock_uom: item.stock_uom,
-						uom: item.uom,
-						conversion_factor: item.conversion_factor,
-						qty: item.qty,
-						rate: item.buying_price || item.last_purchase_rate || item.rate || 0,
-						received_qty: receiveNow.value ? item.received_qty : undefined,
-						warehouse: warehouse.value || item.warehouse,
-					})),
+	item_code: item.item_code,
+	item_name: item.item_name,
+	stock_uom: item.stock_uom,
+	uom: item.uom,
+	conversion_factor: item.conversion_factor,
+	qty: item.qty,
+
+	// Purchase Order Rate
+	rate: item.buying_rate || 0,
+	buying_rate: item.buying_rate || 0,
+
+	// Custom Selling Rate
+	custom_selling_rate: item.custom_selling_rate || 0,
+
+	received_qty: receiveNow.value ? item.received_qty : undefined,
+	warehouse: warehouse.value || item.warehouse,
+})),
 				};
 				const { message } = await frappe.call({
 					method: "posawesome.posawesome.api.purchase_orders.create_purchase_order",
@@ -445,11 +473,16 @@ export default {
 		},
 		itemHeaders() {
 			const h = [
-				{ title: __("Item"), key: "item_name", align: "start", width: "35%" },
-				{ title: __("UOM"), key: "uom", align: "center", width: "15%" },
-				{ title: __("Qty"), key: "qty", align: "center", width: "15%" },
-				{ title: __("Rate"), key: "rate", align: "center", width: "15%" },
-			];
+	{ title: __("Item"), key: "item_name", align: "start", width: "25%" },
+
+	{ title: __("UOM"), key: "uom", align: "center", width: "10%" },
+
+	{ title: __("Qty"), key: "qty", align: "center", width: "10%" },
+
+	{ title: __("Buying Rate"), key: "buying_rate", align: "center", width: "15%" },
+
+	{ title: __("Selling Rate"), key: "custom_selling_rate", align: "center", width: "15%" },
+];
 			h.push(
 				{ title: __("Amount"), key: "amount", align: "end", width: "10%" },
 				{ title: "", key: "actions", align: "center", width: "50px" },

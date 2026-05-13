@@ -1,9 +1,11 @@
 {
  "background_workers": 1,
  "default_site": "citytrader.local",
+ "dns_multitenant": false,
  "file_watcher_port": 6787,
  "frappe_user": "azhar",
  "gunicorn_workers": 25,
+ "host_name": "http://192.168.1.103:8000",
  "live_reload": true,
  "rebase_on_pull": false,
  "redis_cache": "redis://127.0.0.1:13000",

@@ -300,9 +300,17 @@ baseItems: [
 
 	{ text: "Purchase Order", icon: "mdi-cart-plus", to: "/orders" },
 
-	{ text: "Stock Transfer", icon: "mdi-transfer", to: "/stock-transfer" },
+	{
+		text: "Stock Transfer",
+		icon: "mdi-transfer",
+		to: "/app/stock-entry",
+	},
 
-	{ text: "Warehouse Stock", icon: "mdi-warehouse", to: "/warehouse-stock" },
+	{
+		text: "Warehouse Stock",
+		icon: "mdi-warehouse",
+		to: "/app/query-report/Stock Balance",
+	},
 
 	{ text: "Barcode Printing", icon: "mdi-barcode", to: "/barcode" },
 ],

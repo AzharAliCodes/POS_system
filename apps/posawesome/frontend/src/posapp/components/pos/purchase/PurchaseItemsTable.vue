@@ -99,32 +99,62 @@
 			</div>
 		</template>
 
-		<template v-slot:item.rate="{ item }">
-			<div class="pos-table__editor-box">
-				<div
-					v-if="!item._isEditingRate"
-					class="pos-table__editor-display"
-					@click.stop="openRateEdit(item)"
-				>
-					<span class="currency-symbol">{{ currencySymbol }}</span>
-					<span class="amount-value">{{ formatCurrency(item.rate) }}</span>
-				</div>
-				<v-text-field
-					v-else
-					v-model="item._editingRateValue"
-					density="compact"
-					variant="outlined"
-					class="pos-table__editor-input"
-					@blur="closeRateEdit(item)"
-					@keydown.enter.prevent="closeRateEdit(item)"
-					@click.stop
-					autofocus
-					type="number"
-					min="0"
-				></v-text-field>
-			</div>
-		</template>
+		<template v-slot:item.buying_rate="{ item }">
+	<div class="pos-table__editor-box">
+		<div
+			v-if="!item._isEditingBuyingRate"
+			class="pos-table__editor-display"
+			@click.stop="openBuyingRateEdit(item)"
+		>
+			<span class="currency-symbol">{{ currencySymbol }}</span>
+			<span class="amount-value">
+				{{ formatCurrency(item.buying_rate || 0) }}
+			</span>
+		</div>
 
+		<v-text-field
+			v-else
+			v-model="item._editingBuyingRateValue"
+			density="compact"
+			variant="outlined"
+			class="pos-table__editor-input"
+			@blur="closeBuyingRateEdit(item)"
+			@keydown.enter.prevent="closeBuyingRateEdit(item)"
+			@click.stop
+			autofocus
+			type="number"
+			min="0"
+		></v-text-field>
+	</div>
+</template>
+<template v-slot:item.custom_selling_rate="{ item }">
+	<div class="pos-table__editor-box">
+		<div
+			v-if="!item._isEditingSellingRate"
+			class="pos-table__editor-display"
+			@click.stop="openSellingRateEdit(item)"
+		>
+			<span class="currency-symbol">{{ currencySymbol }}</span>
+			<span class="amount-value">
+				{{ formatCurrency(item.custom_selling_rate || 0) }}
+			</span>
+		</div>
+
+		<v-text-field
+			v-else
+			v-model="item._editingSellingRateValue"
+			density="compact"
+			variant="outlined"
+			class="pos-table__editor-input"
+			@blur="closeSellingRateEdit(item)"
+			@keydown.enter.prevent="closeSellingRateEdit(item)"
+			@click.stop
+			autofocus
+			type="number"
+			min="0"
+		></v-text-field>
+	</div>
+</template>
 		<template v-slot:item.received_qty="{ item }">
 			<v-text-field
 				v-if="receiveNow"
@@ -142,7 +172,7 @@
 
 		<template v-slot:item.amount="{ item }">
 			<div class="text-right font-weight-bold">
-				{{ formatCurrency(item.qty * item.rate) }}
+				{{ formatCurrency(item.qty * (item.buying_rate || 0)) }}
 			</div>
 		</template>
 
@@ -177,7 +207,14 @@ export default {
 		formatCurrency: Function,
 		formatNumber: Function,
 	},
-	emits: ["update-uom", "update-qty", "update-rate", "update-received-qty", "remove-item"],
+	emits: [
+ "update-uom",
+ "update-qty",
+ "update-rate",
+ "update-selling-rate",
+ "update-received-qty",
+ "remove-item"
+],
 	methods: {
 		changeUom(item, direction) {
 			if (!item.item_uoms || item.item_uoms.length <= 1) return;
@@ -211,21 +248,46 @@ export default {
 				item._isEditingQty = false;
 			}
 		},
-		openRateEdit(item) {
-			item._isEditingRate = true;
-			item._editingRateValue = "";
-		},
-		closeRateEdit(item) {
-			if (item._isEditingRate) {
-				if (item._editingRateValue !== "" && item._editingRateValue != null) {
-					const val = parseFloat(item._editingRateValue);
-					if (!isNaN(val) && val >= 0) {
-						this.$emit("update-rate", { item, value: val });
-					}
-				}
-				item._isEditingRate = false;
-			}
-		},
+		openBuyingRateEdit(item) {
+	item._isEditingBuyingRate = true;
+	item._editingBuyingRateValue = item.buying_rate || 0;
+},
+
+closeBuyingRateEdit(item) {
+	if (item._isEditingBuyingRate) {
+		const val = parseFloat(item._editingBuyingRateValue);
+
+		if (!isNaN(val) && val >= 0) {
+			this.$emit("update-rate", {
+				item,
+				value: val,
+			});
+		}
+
+		item._isEditingBuyingRate = false;
+	}
+},
+
+openSellingRateEdit(item) {
+	item._isEditingSellingRate = true;
+	item._editingSellingRateValue =
+		item.custom_selling_rate || 0;
+},
+
+closeSellingRateEdit(item) {
+	if (item._isEditingSellingRate) {
+		const val = parseFloat(item._editingSellingRateValue);
+
+		if (!isNaN(val) && val >= 0) {
+			this.$emit("update-selling-rate", {
+				item,
+				value: val,
+			});
+		}
+
+		item._isEditingSellingRate = false;
+	}
+},
 	},
 };
 </script>

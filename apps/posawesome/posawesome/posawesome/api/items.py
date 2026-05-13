@@ -88,7 +88,7 @@ def _collect_delta_item_codes(pos_profile, modified_after, price_list, limit):
 
 
 @frappe.whitelist()
-def get_delta_items(
+def get_delta_items( 
     pos_profile,
     modified_after=None,
     price_list=None,

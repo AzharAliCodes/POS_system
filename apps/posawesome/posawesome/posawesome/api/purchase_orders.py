@@ -699,6 +699,46 @@ def create_purchase_order(data):
                 "schedule_date": schedule_date,
             },
         )
+                # Auto update buying item price
+        buying_rate = flt(
+            row.get("buying_rate")
+            or row.get("rate")
+            or 0
+        )
+
+        if buying_rate > 0:
+            _upsert_item_price(
+                item_code=item_code,
+                price_list=buying_price_list,
+                rate=buying_rate,
+                uom=uom,
+                buying=True,
+            )
+
+        # Auto update selling item price
+        selling_rate = flt(
+            row.get("custom_selling_rate")
+            or 0
+        )
+        
+        if selling_rate <= 0:
+            frappe.throw(
+                _("Selling Rate must be greater than 0 for item {0}").format(item_code)
+            )
+
+        if selling_rate > 0:
+            selling_price_list = (
+                profile.get("selling_price_list")
+                or "Standard Selling"
+            )
+
+            _upsert_item_price(
+                item_code=item_code,
+                price_list=selling_price_list,
+                rate=selling_rate,
+                uom=uom,
+                selling=True,
+            )
 
     if not po_doc.items:
         frappe.throw(_("Purchase order requires at least one item with quantity."))

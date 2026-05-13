@@ -1,4 +1,5 @@
-<template> <nav :class="['pos-themed-card', rtlClasses]">
+<template>
+	<nav :class="['pos-themed-card', rtlClasses]">
 		<!-- Use the modular NavbarAppBar component -->
 		<NavbarAppBar
 			:pos-profile="posProfile"
@@ -292,21 +293,13 @@ export default {
 		return {
 			drawer: false,
 			mini: true,
-		item: 0,
-baseItems: [
-	{ text: "POS", icon: "mdi-network-pos", to: "/pos" },
-
-	{ text: "Payments", icon: "mdi-credit-card", to: "/payments" },
-
-	{ text: "Purchase Order", icon: "mdi-cart-plus", to: "/orders" },
-
-	{ text: "Stock Transfer", icon: "mdi-transfer", to: "/stock-transfer" },
-
-	{ text: "Warehouse Stock", icon: "mdi-warehouse", to: "/warehouse-stock" },
-
-	{ text: "Barcode Printing", icon: "mdi-barcode", to: "/barcode" },
-],
-
+			item: 0,
+			baseItems: [
+				{ text: "POS", icon: "mdi-network-pos", to: "/pos" },
+				{ text: "Payments", icon: "mdi-credit-card", to: "/payments" },
+				{ text: "Purchase Order", icon: "mdi-cart-plus", to: "/orders" },
+				{ text: "Barcode Printing", icon: "mdi-barcode", to: ,
+			],
 			items: [],
 			company: "POS Awesome",
 			companyImg: posLogo,

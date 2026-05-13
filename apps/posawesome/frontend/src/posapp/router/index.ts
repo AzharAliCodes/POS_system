@@ -109,6 +109,9 @@ const routes = [
 		path: "/:pathMatch(.*)*",
 		redirect: "/pos",
 	},
+
+  { path: '/warehouse-stock', component: WarehouseStock },
+  { path: '/stock-transfer', component: StockTransfer },
 ];
 
 export function resolveRouteLoadFailureAction({
@@ -153,6 +156,8 @@ export function resolveRouteLoadingMessage(
 	return "Loading view...";
 }
 
+import WarehouseStock from '../components/pos/stock/WarehouseStock.vue';
+import StockTransfer from '../components/pos/stock/StockTransfer.vue';
 const createPosAppRouter = () => {
 	const history = createWebHistory("/app/posapp");
 	const router = createRouter({

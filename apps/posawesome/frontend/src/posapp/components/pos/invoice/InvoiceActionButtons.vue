@@ -15,7 +15,7 @@
 		</v-col>
 		<v-col cols="12" sm="6">
 			<v-btn
-				block
+				block 
 				color="warning"
 				theme="dark"
 				prepend-icon="mdi-tray-full"

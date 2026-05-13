@@ -189,6 +189,11 @@ def get_item_detail(item, doc=None, warehouse=None, price_list=None, company=Non
 
     # Add gst_applicable from Item master for POS frontend auto-check
     res["gst_applicable"] = frappe.db.get_value("Item", item_code, "gst_applicable") or 0
+    res["custom_selling_rate"] = (
+    res.get("price_list_rate")
+    or res.get("rate")
+    or 0
+    )
 
     return res
 

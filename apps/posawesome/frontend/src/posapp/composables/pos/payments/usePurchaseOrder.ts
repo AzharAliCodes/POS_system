@@ -16,6 +16,8 @@ export interface PurchaseItem {
 	conversion_factor: number;
 	qty: number;
 	rate: number;
+	buying_rate: number;
+    custom_selling_rate: number;
 	stock_uom_rate: number;
 	standard_rate: number;
 	received_qty: number;
@@ -49,7 +51,7 @@ export function usePurchaseOrder(options: {
 
 	const totalAmount = computed(() => {
 		return purchaseItems.value.reduce(
-			(sum, item) => sum + item.qty * item.rate,
+			(sum, item) => sum + item.qty * item.buying_rate,
 			0,
 		);
 	});
@@ -153,6 +155,12 @@ export function usePurchaseOrder(options: {
 				conversion_factor: conversion_factor,
 				qty: 1,
 				rate: rate,
+				buying_rate: rate,
+		custom_selling_rate:
+	item.custom_selling_rate ||
+	item.price_list_rate ||
+	item.rate ||
+	0,
 				stock_uom_rate: rate,
 				standard_rate: item.standard_rate || 0,
 				received_qty: receiveNow.value ? 1 : 0,
@@ -190,7 +198,7 @@ export function usePurchaseOrder(options: {
 				});
 
 				if (message !== undefined && message !== null && message > 0) {
-					item.rate = message;
+					item.buying_rate = message;
 					priceFound = true;
 				}
 			}
@@ -200,7 +208,7 @@ export function usePurchaseOrder(options: {
 
 		if (!priceFound) {
 			const baseRate = item.stock_uom_rate || item.standard_rate || 0;
-			item.rate = baseRate * item.conversion_factor;
+			item.buying_rate = baseRate * item.conversion_factor;
 		}
 	};
 
@@ -209,13 +217,15 @@ export function usePurchaseOrder(options: {
 		item.qty = isNaN(val) ? 0 : val;
 		if (receiveNow.value && !item.receivedQtyManual) {
 			item.received_qty = item.qty;
-		}
+		} 
 	};
 
 	const updateItemRate = (item: PurchaseItem, value: any) => {
-		const val = parseFloat(value);
-		item.rate = isNaN(val) ? 0 : val;
-	};
+	const val = parseFloat(value);
+
+	item.rate = isNaN(val) ? 0 : val;
+	item.buying_rate = isNaN(val) ? 0 : val;
+};
 
 	const updateItemReceivedQty = (item: PurchaseItem, value: any) => {
 		const val = parseFloat(value);

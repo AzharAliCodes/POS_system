@@ -4,7 +4,7 @@
 			<Skeleton v-for="n in 8" :key="n" class="mb-4" height="120" />
 		</div>
 		<div
-			v-else-if="displayedItems.length === 0"
+			v-else-if="!displayedItems || displayedItems.length === 0"
 			class="d-flex flex-column align-center justify-center text-center fill-height pa-4"
 			style="height: 100%; min-height: 200px"
 		>
