@@ -74,8 +74,8 @@
 			</v-col>
 			<v-col cols="6" md="3">
 				<v-card variant="outlined" class="pa-3 text-center">
-					<div class="text-caption text-grey">Net Taxable Amount</div>
-					<div class="text-h6 font-weight-bold">{{ fmt(summary.total_net) }}</div>
+					<div class="text-caption text-grey">Taxable Amount</div>
+					<div class="text-h6 font-weight-bold">{{ fmt(summary.total_taxable) }}</div>
 				</v-card>
 			</v-col>
 			<v-col cols="6" md="3">
@@ -98,7 +98,7 @@
 						<th>Item</th>
 						<th class="text-right">Qty</th>
 						<th class="text-right">Rate (₹)</th>
-						<th class="text-right">Net Amt (₹)</th>
+						<th class="text-right">Taxable Amt (₹)</th>
 						<th class="text-right">GST 1% (₹)</th>
 						<th class="text-right">Total (₹)</th>
 					</tr>
@@ -112,14 +112,14 @@
 						<td class="font-weight-medium">{{ row.item }}</td>
 						<td class="text-right">{{ row.qty }}</td>
 						<td class="text-right">{{ fmt(row.rate) }}</td>
-						<td class="text-right">{{ fmt(row.net_amt) }}</td>
+						<td class="text-right">{{ fmt(row.taxable_amount) }}</td>
 						<td class="text-right text-orange-darken-2 font-weight-medium">{{ fmt(row.gst_amount) }}</td>
 						<td class="text-right font-weight-bold">{{ fmt(row.grand_total) }}</td>
 					</tr>
 					<!-- Totals row -->
 					<tr class="bg-grey-lighten-4 font-weight-bold">
 						<td colspan="7" class="text-right">TOTALS</td>
-						<td class="text-right">{{ fmt(summary.total_net) }}</td>
+						<td class="text-right">{{ fmt(summary.total_taxable) }}</td>
 						<td class="text-right text-orange-darken-2">{{ fmt(summary.total_gst) }}</td>
 						<td class="text-right text-green-darken-2">{{ fmt(summary.total_grand) }}</td>
 					</tr>
@@ -161,7 +161,7 @@
 					</tr>
 					<tr>
 						<td>Net Taxable Amount</td>
-						<td>{{ fmt(summary.total_net) }}</td>
+						<td>{{ fmt(summary.total_taxable) }}</td>
 						<td>GST Collected @ 1%</td>
 						<td class="gst-highlight">{{ fmt(summary.total_gst) }}</td>
 					</tr>
@@ -220,7 +220,7 @@
 							<td class="text-right">{{ row.qty }}</td>
 							<td>{{ row.uom }}</td>
 							<td class="text-right">{{ fmt(row.rate) }}</td>
-							<td class="text-right">{{ fmt(row.net_amt) }}</td>
+							<td class="text-right">{{ fmt(row.taxable_amount) }}</td>
 							<td class="text-right">{{ fmt(row.gst_amount / 2) }}</td>
 							<td class="text-right">{{ fmt(row.gst_amount / 2) }}</td>
 							<td class="text-right gst-col">{{ fmt(row.gst_amount) }}</td>
@@ -231,7 +231,7 @@
 					<!-- Grand Totals Row -->
 					<tr class="ca-totals-row">
 						<td colspan="8" class="text-right"><strong>GRAND TOTALS</strong></td>
-						<td class="text-right"><strong>{{ fmt(summary.total_net) }}</strong></td>
+						<td class="text-right"><strong>{{ fmt(summary.total_taxable) }}</strong></td>
 						<td class="text-right"><strong>{{ fmt(summary.total_gst / 2) }}</strong></td>
 						<td class="text-right"><strong>{{ fmt(summary.total_gst / 2) }}</strong></td>
 						<td class="text-right gst-col"><strong>{{ fmt(summary.total_gst) }}</strong></td>
@@ -283,7 +283,7 @@ const loading  = ref(false);
 const searched = ref(false);
 
 const items   = ref([]);
-const summary = ref({ total_net: 0, total_gst: 0, total_grand: 0, company: "" });
+const summary = ref({ total_taxable: 0, total_gst: 0, total_grand: 0, company: "" });
 
 // ── Computed ────────────────────────────────────────────────────
 const uniqueInvoiceCount = computed(() => {
@@ -337,7 +337,7 @@ async function fetchReport() {
 	loading.value = true;
 	searched.value = true;
 	items.value = [];
-	summary.value = { total_net: 0, total_gst: 0, total_grand: 0, company: "" };
+	summary.value = { total_taxable: 0, total_gst: 0, total_grand: 0, company: "" };
 
 
 try {
@@ -350,7 +350,7 @@ try {
 	const res = await frappe.call({
 		method: "frappe.desk.query_report.run",
 		args: {
-			report_name: "GST Detailed Report",
+			report_name: "test gst",
 			filters: filters,
 			ignore_prepared_report: false,
 			are_default_filters: true,
@@ -388,10 +388,10 @@ try {
 
 
 summary.value = {
-	total_net: items.value.reduce(
-		(sum, row) => sum + parseFloat(row.net_amt || 0),
-		0
-	),
+	total_taxable: items.value.reduce(
+	(sum, row) => sum + parseFloat(row.taxable_amount || 0),
+	0
+),
 
 	total_gst: items.value.reduce(
 		(sum, row) => sum + parseFloat(row.gst_amount || 0),
@@ -431,7 +431,7 @@ summary.value = {
 
 function resetReport() {
 	items.value   = [];
-	summary.value = { total_net: 0, total_gst: 0, total_grand: 0, company: "" };
+	summary.value = { total_taxable: 0, total_gst: 0, total_grand: 0, company: "" };
 	searched.value = false;
 }
 
