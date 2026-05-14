@@ -54,6 +54,15 @@ const routes = [
 		meta: { title: "Reports", layout: "default", loadingMessage: "Loading reports..." },
 	},
 	{
+		path: "/sales-report",
+		component: () => import("@/posapp/components/reports/salesReport.vue"),
+		meta: {
+			title: "Sales Report",
+			layout: "default",
+			loadingMessage: "Loading Sales Report...",
+		},
+	},
+	{
 		path: "/gst-sales-report",
 		component: () => import("@/posapp/components/reports/GstSalesReport.vue"),
 		meta: { title: "GST Sales Report", layout: "default", loadingMessage: "Loading GST Sales Report..." },
@@ -110,8 +119,8 @@ const routes = [
 		redirect: "/pos",
 	},
 
-  { path: '/warehouse-stock', component: WarehouseStock },
-  { path: '/stock-transfer', component: StockTransfer },
+	{ path: '/warehouse-stock', component: WarehouseStock },
+	{ path: '/stock-transfer', component: StockTransfer },
 ];
 
 export function resolveRouteLoadFailureAction({

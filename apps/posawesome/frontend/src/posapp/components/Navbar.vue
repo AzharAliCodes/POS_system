@@ -567,6 +567,11 @@ baseItems: [
 				icon: "mdi-file-document-outline",
 				to: "/gst-sales-report",
 			});
+			items.push({
+	text: "Sales Report",
+	icon: "mdi-file-document-outline",
+	to: "/sales-report",
+});
 			this.items = items;
 		},
 		async fetchTerminalEmployees() {

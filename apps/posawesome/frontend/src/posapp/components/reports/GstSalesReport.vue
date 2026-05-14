@@ -93,7 +93,7 @@
 					<tr>
 						<th>#</th>
 						<th>Date</th>
-						<th>Invoice</th>
+						<!-- <th>Invoice</th> -->
 						<th>Customer</th>
 						<th>Item</th>
 						<th class="text-right">Qty</th>
@@ -107,7 +107,7 @@
 					<tr v-for="(row, i) in items" :key="i">
 						<td class="text-grey">{{ i + 1 }}</td>
 						<td>{{ fmtDate(row.date) }}</td>
-						<td class="font-weight-medium" style="font-size:12px">{{ row.invoice }}</td>
+						<!-- <td class="font-weight-medium" style="font-size:12px">{{ row.invoice }}</td> -->
 						<td>{{ row.customer }}</td>
 						<td class="font-weight-medium">{{ row.item }}</td>
 						<td class="text-right">{{ row.qty }}</td>
@@ -118,7 +118,8 @@
 					</tr>
 					<!-- Totals row -->
 					<tr class="bg-grey-lighten-4 font-weight-bold">
-						<td colspan="7" class="text-right">TOTALS</td>
+						<!-- <td colspan="7" class="text-right">TOTALS</td> -->
+						 <td colspan="6" class="text-right">TOTALS</td>
 						<td class="text-right">{{ fmt(summary.total_taxable) }}</td>
 						<td class="text-right text-orange-darken-2">{{ fmt(summary.total_gst) }}</td>
 						<td class="text-right text-green-darken-2">{{ fmt(summary.total_grand) }}</td>
