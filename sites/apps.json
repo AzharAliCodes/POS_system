@@ -37,5 +37,15 @@
         "required": [],
         "idx": 4,
         "version": "0.0.1"
+    },
+    "city_trader_pos": {
+        "is_repo": true,
+        "resolution": {
+            "commit_hash": "5800ecae4d5ed0861d7d021316a6a2c1612df452",
+            "branch": "develop"
+        },
+        "required": [],
+        "idx": 5,
+        "version": "0.0.1"
     }
 }

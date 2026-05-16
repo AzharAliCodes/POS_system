@@ -1,4 +1,5 @@
 frappe
 erpnext
+city_trader_pos
 custom_app
 posawesome

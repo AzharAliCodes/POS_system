@@ -1,6 +1,7 @@
 {
  "background_workers": 1,
  "default_site": "citytrader.local",
+"developer_mode": 1,
  "dns_multitenant": false,
  "file_watcher_port": 6787,
  "frappe_user": "azhar",

@@ -129,3 +129,5 @@ def get_recent_transfers(limit=10):
         ORDER BY se.posting_date DESC, se.posting_time DESC
         LIMIT %(limit)s
     """, {"home": HOME_WH, "shop": SHOP_WH, "limit": int(limit)}, as_dict=True)
+
+

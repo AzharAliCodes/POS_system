@@ -60,28 +60,16 @@
 
 		<!-- ── Screen: Summary Cards ───────────────────────────────── -->
 		<v-row class="mb-4 no-print" v-if="items.length">
-			<v-col cols="6" md="3">
+			<v-col cols="6" md="6">
 				<v-card variant="outlined" class="pa-3 text-center">
 					<div class="text-caption text-grey">Taxable Items</div>
 					<div class="text-h6 font-weight-bold">{{ items.length }}</div>
 				</v-card>
 			</v-col>
-			<v-col cols="6" md="3">
+			<v-col cols="6" md="6">
 				<v-card variant="outlined" class="pa-3 text-center">
 					<div class="text-caption text-grey">Total Invoices</div>
 					<div class="text-h6 font-weight-bold">{{ uniqueInvoiceCount }}</div>
-				</v-card>
-			</v-col>
-			<v-col cols="6" md="3">
-				<v-card variant="outlined" class="pa-3 text-center">
-					<div class="text-caption text-grey">Taxable Amount</div>
-					<div class="text-h6 font-weight-bold">{{ fmt(summary.total_taxable) }}</div>
-				</v-card>
-			</v-col>
-			<v-col cols="6" md="3">
-				<v-card variant="outlined" class="pa-3 text-center">
-					<div class="text-caption text-grey">GST Collected (1%)</div>
-					<div class="text-h6 font-weight-bold text-orange-darken-2">{{ fmt(summary.total_gst) }}</div>
 				</v-card>
 			</v-col>
 		</v-row> 
@@ -93,13 +81,10 @@
 					<tr>
 						<th>#</th>
 						<th>Date</th>
-						<!-- <th>Invoice</th> -->
 						<th>Customer</th>
 						<th>Item</th>
 						<th class="text-right">Qty</th>
 						<th class="text-right">Rate (₹)</th>
-						<th class="text-right">Taxable Amt (₹)</th>
-						<th class="text-right">GST 1% (₹)</th>
 						<th class="text-right">Total (₹)</th>
 					</tr>
 				</thead>
@@ -107,21 +92,15 @@
 					<tr v-for="(row, i) in items" :key="i">
 						<td class="text-grey">{{ i + 1 }}</td>
 						<td>{{ fmtDate(row.date) }}</td>
-						<!-- <td class="font-weight-medium" style="font-size:12px">{{ row.invoice }}</td> -->
 						<td>{{ row.customer }}</td>
 						<td class="font-weight-medium">{{ row.item }}</td>
 						<td class="text-right">{{ row.qty }}</td>
 						<td class="text-right">{{ fmt(row.rate) }}</td>
-						<td class="text-right">{{ fmt(row.taxable_amount) }}</td>
-						<td class="text-right text-orange-darken-2 font-weight-medium">{{ fmt(row.gst_amount) }}</td>
 						<td class="text-right font-weight-bold">{{ fmt(row.grand_total) }}</td>
 					</tr>
 					<!-- Totals row -->
 					<tr class="bg-grey-lighten-4 font-weight-bold">
-						<!-- <td colspan="7" class="text-right">TOTALS</td> -->
-						 <td colspan="6" class="text-right">TOTALS</td>
-						<td class="text-right">{{ fmt(summary.total_taxable) }}</td>
-						<td class="text-right text-orange-darken-2">{{ fmt(summary.total_gst) }}</td>
+						<td colspan="6" class="text-right">TOTALS</td>
 						<td class="text-right text-green-darken-2">{{ fmt(summary.total_grand) }}</td>
 					</tr>
 				</tbody>
@@ -151,45 +130,6 @@
 
 			<div class="ca-divider"></div>
 
-			<!-- Summary Box -->
-			<div class="ca-summary-box">
-				<table class="ca-summary-table">
-					<tr>
-						<td>Total Taxable Invoices</td>
-						<td>{{ uniqueInvoiceCount }}</td>
-						<td>Total Line Items</td>
-						<td>{{ items.length }}</td>
-					</tr>
-					<tr>
-						<td>Net Taxable Amount</td>
-						<td>{{ fmt(summary.total_taxable) }}</td>
-						<td>GST Collected @ 1%</td>
-						<td class="gst-highlight">{{ fmt(summary.total_gst) }}</td>
-					</tr>
-					<tr class="grand-row">
-						<td colspan="2"><strong>Grand Total (Incl. GST)</strong></td>
-						<td colspan="2" class="grand-val"><strong>{{ fmt(summary.total_grand) }}</strong></td>
-					</tr>
-				</table>
-			</div>
-
-			<div class="ca-divider"></div>
-
-			<!-- GST Breakup for CA -->
-			<div class="ca-section-title">GST Breakup</div>
-			<table class="ca-gst-breakup">
-				<tr>
-					<td>CGST @ 0.5%</td>
-					<td>{{ fmt(summary.total_gst / 2) }}</td>
-					<td>SGST @ 0.5%</td>
-					<td>{{ fmt(summary.total_gst / 2) }}</td>
-					<td>Total GST @ 1%</td>
-					<td class="gst-highlight"><strong>{{ fmt(summary.total_gst) }}</strong></td>
-				</tr>
-			</table>
-
-			<div class="ca-divider"></div>
-
 			<!-- Detail Table -->
 			<div class="ca-section-title">Item-wise Taxable Sales Detail</div>
 			<table class="ca-detail-table">
@@ -197,17 +137,11 @@
 					<tr>
 						<th>Sr.</th>
 						<th>Date</th>
-						<th>Invoice No.</th>
 						<th>Customer</th>
 						<th>Item Name</th>
 						<th>Qty</th>
-						<th>Unit</th>
 						<th>Rate (₹)</th>
-						<th>Net Amt (₹)</th>
-						<th>CGST 0.5% (₹)</th>
-						<th>SGST 0.5% (₹)</th>
-						<th>GST Total (₹)</th>
-						<th>Grand Total (₹)</th>
+						<th>Total (₹)</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -215,27 +149,17 @@
 						<tr v-for="(row, ri) in invoiceGroup" :key="ri" :class="ri === 0 ? 'inv-first-row' : 'inv-cont-row'">
 							<td>{{ itemIndex(invName, ri) }}</td>
 							<td>{{ ri === 0 ? fmtDate(row.date) : '' }}</td>
-							<td>{{ ri === 0 ? row.invoice : '' }}</td>
 							<td>{{ ri === 0 ? row.customer : '' }}</td>
 							<td class="item-name">{{ row.item }}</td>
 							<td class="text-right">{{ row.qty }}</td>
-							<td>{{ row.uom }}</td>
 							<td class="text-right">{{ fmt(row.rate) }}</td>
-							<td class="text-right">{{ fmt(row.taxable_amount) }}</td>
-							<td class="text-right">{{ fmt(row.gst_amount / 2) }}</td>
-							<td class="text-right">{{ fmt(row.gst_amount / 2) }}</td>
-							<td class="text-right gst-col">{{ fmt(row.gst_amount) }}</td>
 							<td class="text-right total-col">{{ fmt(row.grand_total) }}</td>
 						</tr>
 					</template>
 
 					<!-- Grand Totals Row -->
 					<tr class="ca-totals-row">
-						<td colspan="8" class="text-right"><strong>GRAND TOTALS</strong></td>
-						<td class="text-right"><strong>{{ fmt(summary.total_taxable) }}</strong></td>
-						<td class="text-right"><strong>{{ fmt(summary.total_gst / 2) }}</strong></td>
-						<td class="text-right"><strong>{{ fmt(summary.total_gst / 2) }}</strong></td>
-						<td class="text-right gst-col"><strong>{{ fmt(summary.total_gst) }}</strong></td>
+						<td colspan="6" class="text-right"><strong>GRAND TOTALS</strong></td>
 						<td class="text-right total-col"><strong>{{ fmt(summary.total_grand) }}</strong></td>
 					</tr>
 				</tbody>
@@ -340,94 +264,60 @@ async function fetchReport() {
 	items.value = [];
 	summary.value = { total_taxable: 0, total_gst: 0, total_grand: 0, company: "" };
 
+	try {
+		const filters = {
+			from_date: fromDate.value,
+			to_date: toDate.value,
+			company: "City Trader",
+		};
 
-try {
-	const filters = {
-		from_date: fromDate.value,
-		to_date: toDate.value,
-		company: "City Trader",
-	};
-
-	const res = await frappe.call({
-		method: "frappe.desk.query_report.run",
-		args: {
-			report_name: "test gst",
-			filters: filters,
-			ignore_prepared_report: false,
-			are_default_filters: true,
-		},
-	});
-
-	const data = res.message || {};
-
-	// Full rows from ERP report
-	const rows = data.result || [];
-
-
-	// GST-only rows
-	items.value = rows;
-
-	// Summary calculations
-	// summary.value = {
-	// 	total_net: items.value.reduce(
-	// 		(sum, row) => sum + parseFloat(row.net_total || 0),
-	// 		0
-	// 	),
-
-	// 	total_gst: items.value.reduce(
-	// 		(sum, row) => sum + parseFloat(row["gst_1%___ct"] || 0),
-	// 		0
-	// 	),
-
-	// 	total_grand: items.value.reduce(
-	// 		(sum, row) => sum + parseFloat(row.grand_total || 0),
-	// 		0
-	// 	),
-
-	// 	company: "City Trader",
-	// };
-
-
-summary.value = {
-	total_taxable: items.value.reduce(
-	(sum, row) => sum + parseFloat(row.taxable_amount || 0),
-	0
-),
-
-	total_gst: items.value.reduce(
-		(sum, row) => sum + parseFloat(row.gst_amount || 0),
-		0
-	),
-
-	total_grand: items.value.reduce(
-		(sum, row) => sum + parseFloat(row.grand_total || 0),
-		0
-	),
-
-	company: "City Trader",
-};
-
-
-
-	if (!items.value.length) {
-		frappe?.show_alert?.({
-			message: "No GST-applicable items found for this period.",
-			indicator: "blue",
+		const res = await frappe.call({
+			method: "frappe.desk.query_report.run",
+			args: {
+				report_name: "test gst",
+				filters: filters,
+				ignore_prepared_report: false,
+				are_default_filters: true,
+			},
 		});
+
+		const data = res.message || {};
+		const rows = data.result || [];
+
+		items.value = rows;
+
+		summary.value = {
+			total_taxable: items.value.reduce(
+				(sum, row) => sum + parseFloat(row.taxable_amount || 0),
+				0
+			),
+			total_gst: items.value.reduce(
+				(sum, row) => sum + parseFloat(row.gst_amount || 0),
+				0
+			),
+			total_grand: items.value.reduce(
+				(sum, row) => sum + parseFloat(row.grand_total || 0),
+				0
+			),
+			company: "City Trader",
+		};
+
+		if (!items.value.length) {
+			frappe?.show_alert?.({
+				message: "No GST-applicable items found for this period.",
+				indicator: "blue",
+			});
+		}
+
+	} catch (err) {
+		console.error("GST Report fetch error:", err);
+		frappe?.show_alert?.({
+			message: "Failed to fetch report data.",
+			indicator: "red",
+		});
+	} finally {
+		loading.value = false;
 	}
-
-} catch (err) {
-	console.error("GST Report fetch error:", err);
-
-	frappe?.show_alert?.({
-		message: "Failed to fetch report data.",
-		indicator: "red",
-	});
-
-} finally {
-	loading.value = false;
-}
- 
 }
 
 function resetReport() {
@@ -437,7 +327,63 @@ function resetReport() {
 }
 
 function printReport() {
-	window.print();
+	// Inject a global <style> to hide POS Awesome navbar & all Frappe chrome
+	const styleEl = document.createElement("style");
+	styleEl.id = "gst-print-hide-navbar";
+	styleEl.textContent = `
+		@media print {
+			/* POS Awesome top bar */
+			.pos-awesome-header,
+			.pos-header,
+			.pos-title-area,
+			.pos-awesome-toolbar,
+			/* Frappe / ERPNext generic chrome */
+			.navbar,
+			.main-navbar,
+			.page-head,
+			.page-head-content,
+			.page-actions,
+			.page-title,
+			.form-tabs-list,
+			.sticky-top,
+			.awesomebar-area,
+			.layout-side-section,
+			.sidebar-toggle-btn,
+			/* Generic HTML elements used as nav bars */
+			nav,
+			header,
+			#navbar,
+			#toolbar,
+			/* Catch-all attribute selectors */
+			[class*="navbar"],
+			[class*="pos-header"],
+			[class*="pos-nav"],
+			[class*="pos-awesome"],
+			[class*="toolbar"],
+			[class*="page-head"],
+			[class*="sidebar"] {
+				display: none !important;
+				visibility: hidden !important;
+			}
+
+			/* Push page to top-left corner */
+			body, html {
+				margin: 0 !important;
+				padding: 0 !important;
+			}
+		}
+	`;
+	document.head.appendChild(styleEl);
+
+	// Small delay so styles apply before print dialog opens
+	setTimeout(() => {
+		window.print();
+		// Clean up injected style after printing
+		setTimeout(() => {
+			const el = document.getElementById("gst-print-hide-navbar");
+			if (el) el.remove();
+		}, 1000);
+	}, 100);
 }
 </script>
 
@@ -451,6 +397,7 @@ function printReport() {
    PRINT STYLES
    ══════════════════════════════════════════════════════════════ */
 @media print {
+
 	/* Hide screen UI */
 	.no-print {
 		display: none !important;
@@ -467,6 +414,7 @@ function printReport() {
 	/* Reset outer padding for print */
 	.gst-report-root {
 		padding: 0 !important;
+		margin: 0 !important;
 	}
 
 	/* ── CA Header ── */
@@ -528,21 +476,6 @@ function printReport() {
 	}
 	.ca-summary-table .grand-val {
 		text-align: right;
-	}
-	.gst-highlight {
-		font-weight: bold;
-	}
-
-	/* ── GST Breakup ── */
-	.ca-gst-breakup {
-		width: 100%;
-		border-collapse: collapse;
-		font-size: 10pt;
-		margin-bottom: 6pt;
-	}
-	.ca-gst-breakup td {
-		padding: 3pt 8pt;
-		border: 1px solid #aaa;
 	}
 
 	/* ── Section Title ── */
